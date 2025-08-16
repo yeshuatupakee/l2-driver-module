@@ -14,8 +14,6 @@
 </head>
 <body style="background-color: #f8f9fa !important;">
 
-
-
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: var(--jetlouge-primary);">
     <div class="container-fluid">
@@ -37,46 +35,33 @@
   <aside id="sidebar" class="bg-white border-end p-3 shadow-sm">
     <!-- Profile Section -->
     <div class="profile-section text-center">
-<img src="{{ asset('img/default-profile.jpg') }}" alt="Driver Profile" class="profile-img mb-2">
+      <img src="{{ asset('img/default-profile.jpg') }}" alt="Driver Profile" class="profile-img mb-2">
       <h6 class="fw-semibold mb-1">John Doe</h6>
       <small class="text-muted">Jetlouge Driver</small>
     </div>
 
     <!-- Navigation Menu -->
     <ul class="nav flex-column">
-        <!-- Dashboard -->
         <li class="nav-item">
-            <a href="{{ route('dashboard') }}"
-              class="nav-link text-dark {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+            <a href="{{ route('dashboard') }}" class="nav-link text-dark {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                 <i class="bi bi-speedometer2 me-2"></i> Dashboard
             </a>
         </li>
-
-        <!-- Trip Assignment -->
         <li class="nav-item">
-            <a href="{{ route('trip-assignment') }}"
-              class="nav-link text-dark {{ request()->routeIs('trip-assignment') ? 'active' : '' }}">
+            <a href="{{ route('trip-assignment') }}" class="nav-link text-dark {{ request()->routeIs('trip-assignment') ? 'active' : '' }}">
                 <i class="bi bi-truck me-2"></i> Trip Assignment
             </a>
         </li>
-
-        <!-- Live Tracking -->
         <li class="nav-item">
-            <a href="{{ route('live-tracking') }}"
-              class="nav-link text-dark {{ request()->routeIs('live-tracking') ? 'active' : '' }}">
+            <a href="{{ route('live-tracking') }}" class="nav-link text-dark {{ request()->routeIs('live-tracking') ? 'active' : '' }}">
                 <i class="bi bi-geo-alt me-2"></i> Live Tracking
             </a>
         </li>
-
-        <!-- Reports and Checklist -->
         <li class="nav-item">
-            <a href="{{ route('reports-and-checklist') }}"
-              class="nav-link text-dark {{ request()->routeIs('reports-and-checklist') ? 'active' : '' }}">
+            <a href="{{ route('reports-and-checklist') }}" class="nav-link text-dark {{ request()->routeIs('reports-and-checklist') ? 'active' : '' }}">
                 <i class="bi bi-clipboard-check me-2"></i> Reports and Checklist
             </a>
         </li>
-
-        <!-- Logout -->
         <li class="nav-item mt-3">
             <a href="" class="nav-link text-danger">
                 <i class="bi bi-box-arrow-right me-2"></i> Logout
@@ -90,7 +75,6 @@
 
   <!-- Main Content -->
   <main id="main-content">
-    <!-- Page Header -->
       @yield('content')
   </main>
 
@@ -121,24 +105,15 @@
         desktopToggle.addEventListener('click', (e) => {
           e.preventDefault();
           e.stopPropagation();
-
           const isCollapsed = sidebar.classList.contains('collapsed');
-
-          // Toggle classes with smooth animation
           sidebar.classList.toggle('collapsed');
           mainContent.classList.toggle('expanded');
-
-          // Store state in localStorage for persistence
           localStorage.setItem('sidebarCollapsed', !isCollapsed);
-
-          // Trigger window resize event to help responsive components adjust
-          setTimeout(() => {
-            window.dispatchEvent(new Event('resize'));
-          }, 300);
+          setTimeout(() => { window.dispatchEvent(new Event('resize')); }, 300);
         });
       }
 
-      // Restore sidebar state from localStorage
+      // Restore sidebar collapsed state
       const savedState = localStorage.getItem('sidebarCollapsed');
       if (savedState === 'true' && sidebar && mainContent) {
         sidebar.classList.add('collapsed');
@@ -154,14 +129,13 @@
         });
       }
 
-      // Add loading animation to quick action buttons
+      // Add loading animation to buttons
       document.querySelectorAll('.btn').forEach(btn => {
-        btn.addEventListener('click', function(e) {
+        btn.addEventListener('click', function() {
           if (!this.classList.contains('loading')) {
             this.classList.add('loading');
             const originalText = this.innerHTML;
             this.innerHTML = '<i class="bi bi-arrow-clockwise me-2"></i>Loading...';
-
             setTimeout(() => {
               this.innerHTML = originalText;
               this.classList.remove('loading');
@@ -170,68 +144,17 @@
         });
       });
 
-      // Handle window resize for responsive behavior
+      // Reset mobile sidebar on window resize
       window.addEventListener('resize', () => {
-        // Reset mobile sidebar state on desktop
         if (window.innerWidth >= 768) {
           sidebar.classList.remove('active');
           overlay.classList.remove('show');
           document.body.style.overflow = '';
         }
       });
-
-      // --- Persist only real route links (ignore hash toggles) ---
-      document.querySelectorAll('.nav-link').forEach(link => {
-        const href = link.getAttribute('href') || '';
-        // persist only real route links (ignore hash toggles)
-        if (!href.startsWith('#') && href.trim() !== '') {
-          link.addEventListener('click', function () {
-            // mark active link visually
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            this.classList.add('active');
-
-            localStorage.setItem('activeLink', href);
-            // clicking a real route should clear the open submenu state
-            localStorage.removeItem('openSubmenu');
-          });
-        }
-      });
-
-      // --- Save submenu open/close, but only for collapse toggles ---
-      document.querySelectorAll('.collapse-toggle').forEach(toggle => {
-        toggle.addEventListener('click', function () {
-          const targetId = this.getAttribute('href');
-          const submenu = document.querySelector(targetId);
-          const isOpen = submenu && submenu.classList.contains('show');
-          // store either '' (none) or the selector to open
-          localStorage.setItem('openSubmenu', isOpen ? '' : targetId);
-        });
-      });
-
-      // --- Restore submenu state (defensive) ---
-      const openSubmenu = localStorage.getItem('openSubmenu');
-      if (openSubmenu) {
-        const submenu = document.querySelector(openSubmenu);
-        if (submenu) submenu.classList.add('show');
-      }
-
-      // --- Restore active link (only for real links) ---
-      const activeLink = localStorage.getItem('activeLink');
-      if (activeLink) {
-        const link = document.querySelector(`.nav-link[href="${activeLink}"]`);
-        if (link) {
-          document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-          link.classList.add('active');
-          // open its parent submenu if needed
-          const parentCollapse = link.closest('.collapse');
-          if (parentCollapse && !parentCollapse.classList.contains('show')) {
-            parentCollapse.classList.add('show');
-          }
-        }
-      }
-
-    }); // Close DOMContentLoaded
+    });
   </script>
 
+  @stack('scripts')
 </body>
 </html>
