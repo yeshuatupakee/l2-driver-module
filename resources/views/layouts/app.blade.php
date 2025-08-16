@@ -4,14 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/x-icon" href="{{ asset('img/jetlouge_logo.png') }}">
-  <title>Jetlouge Travels - Dashboard</title>
+  <title>Jetlouge Travels - Driver Dashboard</title>
 
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="{{ asset('css/dash-style-fixed.css') }}">
+
+  <!-- Page-specific styles -->
+  @stack('styles')
 </head>
+
 <body style="background-color: #f8f9fa !important;">
 
   <!-- Navbar -->
